@@ -1,0 +1,193 @@
+#!/usr/bin/env fish
+
+# Environment Variables
+set -x LANG en_US.UTF-8
+set -x LC_ALL en_US.UTF-8
+
+# Cache brew prefix for performance
+set -l brew_prefix (brew --prefix)
+
+# Path Configuration
+fish_add_path $brew_prefix/bin
+fish_add_path $brew_prefix/sbin
+fish_add_path $brew_prefix/opt/coreutils/libexec/gnubin
+fish_add_path $brew_prefix/opt/libpq/bin
+fish_add_path $brew_prefix/opt/openssl/bin
+fish_add_path (go env GOPATH)/bin
+fish_add_path ~/.emacs.d/bin
+fish_add_path ~/.yarn/bin
+fish_add_path ~/.poetry/bin
+fish_add_path ~/.cargo/bin
+fish_add_path ~/.local/bin
+
+# Editor Configuration
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+
+# Development Environment
+set -gx HOMEBREW_GITHUB_API_TOKEN {{ .secrets.HOMEBREW_GITHUB_API_TOKEN }}
+set -gx GOPRIVATE {{ .secrets.GOPRIVATE | quote }}
+set -gx OS_OUTPUT_GOPATH 1
+set -gx GOEXPERIMENT rangefunc
+
+# Build Configuration
+set -gx PKG_CONFIG_PATH $brew_prefix/opt/libffi/lib/pkgconfig
+set -gx LDFLAGS "-L$brew_prefix/opt/openssl/lib"
+set -gx CPPFLAGS "-I$brew_prefix/opt/openssl/include"
+
+# Application Configuration
+set -gx AIRFLOW_HOME ~/.config/airflow
+set -gx TERM xterm-256color
+
+# Fish Configuration
+set -g fish_color_autosuggestion 666
+set -g fish_prompt_pwd_dir_length 0  # Disable path shortening in prompt
+
+# Shell Integrations
+if command -q zoxide
+    zoxide init fish | source
+end
+
+if command -q kafkactl
+    kafkactl completion fish | source
+end
+
+if command -q fzf
+    fzf --fish | source
+end
+
+# Homebrew Completions
+if test -d $brew_prefix/share/fish/completions
+    set -gx fish_complete_path $fish_complete_path $brew_prefix/share/fish/completions
+end
+
+if test -d $brew_prefix/share/fish/vendor_completions.d
+    set -gx fish_complete_path $fish_complete_path $brew_prefix/share/fish/vendor_completions.d
+end
+
+# Aliases
+
+# File Management
+alias fd="fd -H"  # Show hidden files by default
+alias ll="eza --long --header --git --all --sort name --group-directories-first"
+alias l="ll"
+alias tree="eza -T --long --all"
+
+# Search
+alias rg="rg -i"  # Case insensitive by default
+
+# GitHub
+alias gh-view="gh repo view -w"
+
+# Chezmoi
+alias cm="chezmoi"
+
+# Git
+alias gs="git status"
+alias gc="git checkout"
+alias gpr="git pull --rebase"
+alias gm="git merge --no-ff"
+alias gpa="git push && git push --tags"
+alias gr="git remote -v show | awk '{print \$1 \"\\t\" \$2}' | uniq"
+alias glog='git log --format=format:"%Cgreen%ai%Creset %>(30) %ae %Cblue%s" --author="zhuravlev"'
+
+# Kubernetes
+alias k="kubectl"
+alias ktx="kubectx"
+alias h="helm"
+
+# Development Tools
+alias e="nvim"
+alias gitup="open -a GitUp ."
+alias vscode="open -a Visual\\ Studio\\ Code"
+alias tm="tmux attach || tmux new"
+
+# Docker
+alias dps="docker ps --format='table {{"{{"}}.Names{{"}}"}}\\t{{"{{"}}.ID{{"}}"}}\\t{{"{{"}}.Status{{"}}"}}\\t{{"{{"}}.Image{{"}}"}}\\t{{"{{"}}.Ports{{"}}"}}' | docker-color-output"
+alias dil="docker image list | docker-color-output"
+
+# System Utilities
+alias dns-flush="sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder"
+alias get-iphone-id="system_profiler SPUSBDataType | grep 'Serial Number' | awk '{print \$3}'"
+alias test-disk-read="dd if=tstfile bs=2048k of=/dev/null count=1024 2>&1 | grep sec | awk '{print \$1 / 1024 / 1024 / \$5, \"MB/sec\" }'"
+alias test-disk-write="dd if=/dev/zero bs=2048k of=tstfile count=1024 2>&1 | grep sec | awk '{print \$1 / 1024 / 1024 / \$5, \"MB/sec\" }'"
+alias yota="sudo sysctl -w net.inet.ip.ttl=65"
+
+# Cleanup Commands
+alias cleanup-go="go clean -cache -testcache -modcache -fuzzcache"
+alias cleanup-rust="cargo install cargo-cache && cargo cache -a"
+alias cleanup-caches="rm -rf ~/Library/Caches/*"
+alias cleanup-logs="rm -rf ~/Library/Logs/*"
+alias cleanup-brew="brew cleanup -s --prune all"
+alias cleanup-all="cleanup-go && cleanup-rust && cleanup-caches && cleanup-logs && cleanup-brew"
+
+# Other Tools
+alias kfk="kafkactl"
+alias buf="arch -arm64 buf"
+alias tp="mkdir -p ~/.telepresence/run-dir && cd ~/.telepresence/run-dir && sudo telepresence"
+alias gitlab-pipelines="repeat 10000 clear && glab pipeline list -P 3 && sleep 3 || sleep 3"
+
+# Privacy
+alias incognito="set -e HISTFILE"
+
+# Interactive Shell Configuration
+if status is-interactive
+    # Set prompt theme
+    fish_config prompt choose scales
+    theme_gruvbox dark
+end
+
+# Functions
+
+function add_librd_kafka
+    set -l kafka_version (brew info --json librdkafka | jq --raw-output '.[0].linked_keg')
+    set -gx C_INCLUDE_PATH $brew_prefix/Cellar/librdkafka/$kafka_version/include
+    set -gx LIBRARY_PATH $brew_prefix/Cellar/librdkafka/$kafka_version/lib
+end
+
+function penv-init
+    if not test -e venv
+        if test -e requirements.txt
+            python3 -m venv venv
+            source ./venv/bin/activate.fish
+            pip install -U pip setuptools
+            pip install -r requirements.txt
+        else
+            echo "No requirements.txt found"
+            return 1
+        end
+    else
+        echo "Virtual environment already exists"
+        source ./venv/bin/activate.fish
+    end
+end
+
+function mkcd
+    mkdir -p $argv[1] && cd $argv[1]
+end
+
+function backup
+    cp -r $argv[1] $argv[1].backup.(date +%Y%m%d-%H%M%S)
+end
+
+# Custom Greeting
+function fish_greeting
+    if not set -q fish_greeting
+        set -l commands (
+            printf " %sfd%s\t\tFind files\n" (set_color green) (set_color normal)
+            printf " %srg%s\t\tGrep files\n" (set_color green) (set_color normal)
+            printf " %sll%s\t\tList files\n" (set_color green) (set_color normal)
+            printf " %se%s\t\tEdit files (nvim)\n" (set_color green) (set_color normal)
+            printf " %sk%s\t\tKubectl\n" (set_color green) (set_color normal)
+            printf " %stm%s\t\tTmux session" (set_color green) (set_color normal)
+        )
+        set -g fish_greeting (string join "" $commands)
+    end
+
+    if set -q fish_private_mode
+        set -g fish_greeting $fish_greeting\n(set_color yellow)"Private mode: history will not be persisted"(set_color normal)
+    end
+
+    test -n "$fish_greeting"
+    and echo $fish_greeting
+end

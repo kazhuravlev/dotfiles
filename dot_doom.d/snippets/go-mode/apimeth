@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: api method
+# uuid:
+# condition: t
+# --
+type $1Request struct{$0}
+
+type $1Response struct{}
+
+
+func (s *Service) ${1:SomeMethod}(ctx context.Context, req $1Request)(*$1Response, error) {
+    return &$1Response{}, nil
+}

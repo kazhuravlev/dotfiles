@@ -1,0 +1,41 @@
+{{- $secretsMethod := promptStringOnce . "secretsMethod" "Which secrets management method to use? (1password/configfile/bitwarden)" "1password" -}}
+
+[data]
+    # Secrets configuration
+    {{- if eq $secretsMethod "1password" }}
+    # Using 1Password for secrets
+    secrets.HOMEBREW_GITHUB_API_TOKEN = {{ onepasswordRead "op://Dotfiles/HOMEBREW_GITHUB_API_TOKEN/password" | quote }}
+    secrets.GOPRIVATE = {{ onepasswordRead "op://Dotfiles/GOPRIVATE/password" | quote }}
+    secrets.NGROK_AUTH_TOKEN = {{ onepasswordRead "op://Dotfiles/NGROK_AUTH_TOKEN/password" | quote }}
+
+    {{- else if eq $secretsMethod "bitwarden" }}
+    # Using Bitwarden for secrets
+    secrets.HOMEBREW_GITHUB_API_TOKEN = {{ bitwardenFields "HOMEBREW_GITHUB_API_TOKEN" "password" | quote }}
+    secrets.GOPRIVATE = {{ bitwardenFields "GOPRIVATE" "password" | quote }}
+    secrets.NGROK_AUTH_TOKEN = {{ bitwardenFields "NGROK_AUTH_TOKEN" "password" | quote }}
+
+    {{- else if eq $secretsMethod "configfile" }}
+        {{- $configPath := "~/.config/chezmoi/secrets.toml" }}
+        {{- $secretsFile := joinPath (env "HOME") $configPath }}
+
+        {{- if stat $secretsFile }}
+            {{- $secretsData := include $secretsFile | fromToml }}
+    # Using config file for secrets
+    secrets.HOMEBREW_GITHUB_API_TOKEN = {{ $secretsData.HOMEBREW_GITHUB_API_TOKEN | quote }}
+    secrets.GOPRIVATE = {{ $secretsData.GOPRIVATE | quote }}
+    secrets.NGROK_AUTH_TOKEN = {{ $secretsData.NGROK_AUTH_TOKEN | quote }}
+            {{- if $secretsData.ADDITIONAL_SECRETS }}
+                {{- range $key, $value := $secretsData.ADDITIONAL_SECRETS }}
+    secrets.{{ $key }} = {{ $value | quote }}
+                {{- end }}
+            {{- end }}
+
+        {{- else }}
+    # ERROR: Secrets file not found at {{ $secretsFile }}
+    secrets.HOMEBREW_GITHUB_API_TOKEN = "MISSING_SECRET_FILE"
+    secrets.GOPRIVATE = "MISSING_SECRET_FILE"
+    secrets.NGROK_AUTH_TOKEN = "MISSING_SECRET_FILE"
+        {{- end }}
+
+    {{- end }}
+

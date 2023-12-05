@@ -1,0 +1,6 @@
+LICENSE
+*.md
+
+.gitignore
+secrets.toml
+secrets.toml.example

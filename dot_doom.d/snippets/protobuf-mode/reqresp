@@ -1,0 +1,12 @@
+# key: reqresp
+# name: reqresp
+# --
+// $1Request
+message $1Request {
+    $2
+}
+
+// $1Response
+message $1Response {
+    $3
+}
