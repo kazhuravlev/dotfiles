@@ -14,7 +14,7 @@
     {{- else if eq $secretsMethod "bitwarden" }}
     # Using Bitwarden for secrets
         {{- range $secret := $secrets }}
-    secrets.{{ $secret }} = {{ bitwardenFields $secret "password" | quote }}
+    secrets.{{ $secret }} = {{ (bitwardenFields "item" "$secret").password.value | quote }}
         {{- end }}
 
     {{- else if eq $secretsMethod "configfile" }}
