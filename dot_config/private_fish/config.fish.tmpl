@@ -193,21 +193,21 @@ function fish_greeting
     and echo $fish_greeting
 end
 
-# Helper: get field by label from the fetched item
-function __op_field --argument-names label --no-scope-shadowing
-    jq -r --arg l $label '.fields[] | select(.label==$l) | .value' <<< $item
-end
+function r --wraps restic --description "restic (B2 S3) with secrets from 1Password"
+    set -l item (op item get "chezmoi-secrets" --vault Dotfiles --format json | string collect)
 
-function r --wraps restic --description "restic (Backblaze B2 S3) with secrets from 1Password"
-    set -l item (op item get "restic-personal-backup-config" --vault Homelab --format json)
-   
-    set -lx RESTIC_REPOSITORY           (__op_field "restic-repo")
-    set -lx RESTIC_PASSWORD             (__op_field "encryption-password")
-    set -lx AWS_ACCESS_KEY_ID           (__op_field "s3-access-key")
-    set -lx AWS_SECRET_ACCESS_KEY       (__op_field "s3-secret-key")
-    set -lx AWS_DEFAULT_REGION          (__op_field "s3-region")
-    set -lx AWS_ENDPOINT_URL            (__op_field "s3-endpoint")
-    set -lx RESTIC_AWS_ASSUME_ROLE_TTL  "1h"
+    # helper: extract field by label from the fetched item
+    function __op_field --argument-names label item_json
+        echo $item_json | jq -er --arg l "$label" '.fields[] | select(.label==$l) | .value'
+    end
+
+    set -lx RESTIC_REPOSITORY          (__op_field "RESTIC_REPO"                 $item)
+    set -lx RESTIC_PASSWORD            (__op_field "RESTIC_ENCRYPTION_PASSWORD"  $item)
+    set -lx AWS_ACCESS_KEY_ID          (__op_field "RESTIC_ACCESS_KEY"           $item)
+    set -lx AWS_SECRET_ACCESS_KEY      (__op_field "RESTIC_SECRET_KEY"           $item)
+    set -lx AWS_DEFAULT_REGION         (__op_field "RESTIC_S3_REGION"            $item)
+    set -lx AWS_ENDPOINT_URL           (__op_field "RESTIC_S3_ENDPOINT"          $item)
+    set -lx RESTIC_AWS_ASSUME_ROLE_TTL "1h"
 
     command restic $argv
 end
