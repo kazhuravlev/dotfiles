@@ -29,6 +29,7 @@ set -gx HOMEBREW_GITHUB_API_TOKEN {{ .secrets.HOMEBREW_GITHUB_API_TOKEN }}
 set -gx GOPRIVATE {{ .secrets.GOPRIVATE | quote }}
 set -gx OS_OUTPUT_GOPATH 1
 set -gx GOEXPERIMENT rangefunc
+set -gx GITHUB_TOKEN {{ .secrets.GITHUB_TOKEN }}
 
 # Build Configuration
 set -gx PKG_CONFIG_PATH $brew_prefix/opt/libffi/lib/pkgconfig
