@@ -1,6 +1,6 @@
 {{- $secretsMethod := promptStringOnce . "secretsMethod" "Which secrets management method to use? (1password/configfile/bitwarden)" "1password" -}}
 
-{{- $secrets := list "HOMEBREW_GITHUB_API_TOKEN" "GOPRIVATE" "NGROK_AUTH_TOKEN" "GITHUB_TOKEN" "RESTIC_REPO" "RESTIC_S3_ENDPOINT" "RESTIC_ACCESS_KEY" "RESTIC_SECRET_KEY" "RESTIC_S3_REGION" -}}
+{{- $secrets := list "HOMEBREW_GITHUB_API_TOKEN" "GOPRIVATE" "NGROK_AUTH_TOKEN" "GITHUB_TOKEN" -}}
 
 [data]
     # Secrets configuration
