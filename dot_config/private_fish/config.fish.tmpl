@@ -192,3 +192,104 @@ function fish_greeting
     test -n "$fish_greeting"
     and echo $fish_greeting
 end
+
+# Helper: get field by label from the fetched item
+function __op_field --argument-names label --no-scope-shadowing
+    jq -r --arg l $label '.fields[] | select(.label==$l) | .value' <<< $item
+end
+
+function r --wraps restic --description "restic (Backblaze B2 S3) with secrets from 1Password"
+    set -l item (op item get "restic-personal-backup-config" --vault Homelab --format json)
+   
+    set -lx RESTIC_REPOSITORY           (__op_field "restic-repo")
+    set -lx RESTIC_PASSWORD             (__op_field "encryption-password")
+    set -lx AWS_ACCESS_KEY_ID           (__op_field "s3-access-key")
+    set -lx AWS_SECRET_ACCESS_KEY       (__op_field "s3-secret-key")
+    set -lx AWS_DEFAULT_REGION          (__op_field "s3-region")
+    set -lx AWS_ENDPOINT_URL            (__op_field "s3-endpoint")
+    set -lx RESTIC_AWS_ASSUME_ROLE_TTL  "1h"
+
+    command restic $argv
+end
+
+function rbackup --description "Restic backup with tags"
+  set -l host (hostname -s)
+  # TODO: add exclude file and backup entire ~ directory
+  r backup \
+    ~/.afirma \
+    ~/.ansible \
+    ~/.arduinoIDE \
+    ~/.aws \
+    ~/.claude \
+    ~/.codex \
+    ~/.config \
+    ~/.doom.d \
+    ~/.fnmt \
+    ~/.gnupg \
+    ~/.kube \
+    ~/.local \
+    ~/.mongodb \
+    ~/.ngrok2 \
+    ~/.ssh \
+    ~/.tmux \
+    ~/Desktop \
+    ~/Documents \
+    ~/Downloads \
+    ~/p \
+    ~/.alacritty.toml \
+    ~/.bash_history \
+    ~/.bashrc \
+    ~/.claude.json \
+    ~/.editorconfig \
+    ~/.fzf.bash \
+    ~/.gitconfig \
+    ~/.gitconfig.aliases \
+    ~/.iredis_history \
+    ~/.netrc \
+    ~/.profile \
+    ~/.psql_history \
+    ~/.python_history \
+    ~/.tmux.conf \
+    ~/.wgetrc \
+    ~/.yarnrc \
+    ~/.zsh_history \
+    ~/Library/Application\ Support/Capture\ One \
+    ~/Library/Application\ Support/obsidian \
+    ~/Library/Application\ Support/Telegram\ Desktop \
+    ~/Library/Application\ Support/AutoFirma \
+    ~/Library/Application\ Support/doctl \
+    --exclude '**/node_modules' \
+    --exclude '**/.git' \
+    --exclude '**/Cache*' \
+    --exclude '**/.DS_Store' \
+    --exclude '**/.Spotlight-V100' \
+    --exclude '**/.Trashes' \
+    --exclude '**/.fseventsd' \
+    --exclude '**/.TemporaryItems' \
+    --exclude '**/Icon?' \
+    --exclude '~/Library/Caches' \
+    --exclude '~/Library/Logs' \
+    --exclude '~/Library/Containers/*/Data/Library/Caches' \
+    --exclude '~/Library/Containers/*/Data/Library/Logs' \
+    --exclude '~/Library/Application Support/*/Cache*' \
+    --exclude '~/Library/Application Support/CrashReporter' \
+    --exclude '**/Docker.raw' \
+    --exclude '**/docker.sock' \
+    --exclude '~/Library/Containers/com.docker.docker' \
+    --exclude '~/Library/Group Containers/group.com.docker' \
+    --exclude '**/*.qcow2' \
+    --exclude '**/*.vdi' \
+    --exclude '**/*.vmdk' \
+    --exclude '**/__pycache__' \
+    --exclude '**/*.pyc' \
+    --exclude '~/Library/Application Support/Google/Chrome/*/Cache' \
+    --exclude '~/Library/Application Support/Firefox/Profiles/*/cache2' \
+    --exclude '~/Library/Application Support/Slack/Cache' \
+    --exclude '~/Library/Application Support/Code/Cache' \
+    --exclude '~/Library/Application Support/discord/Cache' \
+    --one-file-system \
+    --exclude-caches \
+    --tag macos \
+    --tag $host
+end
+
