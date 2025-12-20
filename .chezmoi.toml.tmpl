@@ -8,7 +8,7 @@
     {{- if eq $secretsMethod "1password" }}
     # Using 1Password for secrets
         {{- range $secret := $secrets }}
-    secrets.{{ $secret }} = {{ onepasswordRead (printf "op://Dotfiles/%s/password" $secret) | quote }}
+    secrets.{{ $secret }} = {{ onepasswordRead (printf "op://Dotfiles/chezmoi-secrets/%s" $secret) | quote }}
         {{- end }}
 
     {{- else if eq $secretsMethod "bitwarden" }}
