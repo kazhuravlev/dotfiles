@@ -106,6 +106,14 @@ chezmoi edit ~/.config/file
 chezmoi apply
 ```
 
+### Backup brew installations
+
+```shell
+mkdir -p ~/.config/brew
+brew bundle dump --file ~/.config/brew/brewfile --force
+chezmoi re-add ~/.config/brew/brewfile
+```
+
 ## To Do
 
 - Import useful configurations from https://github.com/mathiasbynens/dotfiles/blob/main/.macos

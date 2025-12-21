@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "brew not installed, skip"
+  exit 0
+fi
+
+echo ">>> Applying Brewfile"
+brew bundle --file="$HOME/.config/brew/brewfile" --no-upgrade
+
