@@ -6,6 +6,10 @@ This repository contains my personal dotfiles managed with [chezmoi](https://www
 
 ### Installation
 
+0. Install brew
+
+Read the docs: https://docs.brew.sh/Installation
+
 1. Install chezmoi:
 
 ```shell
@@ -15,7 +19,7 @@ brew install chezmoi
 2. Initialize chezmoi with this repository:
 
 ```shell
-chezmoi init https://github.com/yourusername/dotfiles.git
+chezmoi init https://github.com/kazhuravlev/dotfiles.git
 ```
 
 3. Preview changes:
