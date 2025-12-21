@@ -139,4 +139,5 @@ mods = "Command"
 
 [terminal.shell]
 program = "/opt/homebrew/bin/fish"
-args = ["-c", "tm"]
+args = ["-l", "-c", "tm"]
+
