@@ -1,5 +1,14 @@
+{{ if eq .chezmoi.os "darwin" -}}
 #!/usr/bin/env bash
+
 set -euo pipefail
+
+echo ">>> Installing Homebrew..."
+
+# Install Homebrew if not already installed
+if ! command -v brew &> /dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
 
 if ! command -v brew >/dev/null 2>&1; then
   echo "brew not installed, skip"
@@ -8,4 +17,28 @@ fi
 
 echo ">>> Applying Brewfile"
 brew bundle --file="$HOME/.config/brew/brewfile" --no-upgrade
+
+# Post-installation setup
+echo ">>> Running post-installation setup..."
+
+# Install Tmux Plugin Manager
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    echo ">>> Installing Tmux Plugin Manager..."
+    git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+fi
+
+# Install Fisher for Fish shell
+if command -v fish &> /dev/null && ! fish -c "type -q fisher" &> /dev/null; then
+    echo ">>> Installing Fisher for Fish shell..."
+    fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
+fi
+
+# Install Doom Emacs
+if [ ! -d "$HOME/.emacs.d" ]; then
+    echo ">>> Installing Doom Emacs..."
+    git clone https://github.com/hlissner/doom-emacs "$HOME/.emacs.d"
+    "$HOME/.emacs.d/bin/doom" install --no-config
+fi
+
+{{ end -}}
 
