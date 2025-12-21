@@ -8,25 +8,25 @@ This repository contains my personal dotfiles managed with [chezmoi](https://www
 
 1. Install chezmoi:
 
-```bash
+```shell
 brew install chezmoi
 ```
 
 2. Initialize chezmoi with this repository:
 
-```bash
+```shell
 chezmoi init https://github.com/yourusername/dotfiles.git
 ```
 
 3. Preview changes:
 
-```bash
+```shell
 chezmoi diff
 ```
 
 4. Apply the configuration:
 
-```bash
+```shell
 chezmoi apply
 ```
 
@@ -84,25 +84,25 @@ Edit `.chezmoi.toml.tmpl` to customize the list of packages to install.
 
 ### Update dotfiles
 
-```bash
+```shell
 chezmoi update
 ```
 
 ### Add a new file
 
-```bash
+```shell
 chezmoi add ~/.config/newfile
 ```
 
 ### Edit a managed file
 
-```bash
+```shell
 chezmoi edit ~/.config/file
 ```
 
 ### Apply changes after editing
 
-```bash
+```shell
 chezmoi apply
 ```
 
