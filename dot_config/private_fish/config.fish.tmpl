@@ -259,7 +259,6 @@ function rbackup --description "Restic backup with tags"
     ~/Library/Application\ Support/AutoFirma \
     ~/Library/Application\ Support/doctl \
     --exclude '**/node_modules' \
-    --exclude '**/.git' \
     --exclude '**/Cache*' \
     --exclude '**/.DS_Store' \
     --exclude '**/.Spotlight-V100' \
@@ -277,9 +276,6 @@ function rbackup --description "Restic backup with tags"
     --exclude '**/docker.sock' \
     --exclude '~/Library/Containers/com.docker.docker' \
     --exclude '~/Library/Group Containers/group.com.docker' \
-    --exclude '**/*.qcow2' \
-    --exclude '**/*.vdi' \
-    --exclude '**/*.vmdk' \
     --exclude '**/__pycache__' \
     --exclude '**/*.pyc' \
     --exclude '~/Library/Application Support/Google/Chrome/*/Cache' \
