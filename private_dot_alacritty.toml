@@ -1,18 +1,15 @@
 # Alacritty Configuration
-
 [general]
-live_config_reload = false
-working_directory = "~"
+live_config_reload = true
 
 [env]
-TERM = "xterm-256color"
+# TERM = "xterm-256color"  # можно убрать, если всё равно tmux
+COLORTERM = "truecolor"
 
 [window]
-dimensions = { columns = 180, lines = 50 }
 padding = { x = 0, y = 0 }
 decorations = "buttonless"
 opacity = 0.95
-blur = true
 startup_mode = "Maximized"
 dynamic_title = true
 
@@ -75,23 +72,12 @@ blink_interval = 750
 unfocused_hollow = true
 
 [scrolling]
-history = 10000
 multiplier = 3
 
 [selection]
 save_to_clipboard = true
 
 # Key bindings
-[[keyboard.bindings]]
-key = "N"
-mods = "Command"
-action = "CreateNewWindow"
-
-[[keyboard.bindings]]
-key = "T"
-mods = "Command"
-action = "CreateNewTab"
-
 [[keyboard.bindings]]
 key = "W"
 mods = "Command"
