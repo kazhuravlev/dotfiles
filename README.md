@@ -2,6 +2,13 @@
 
 This repository contains my personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
+## Manual
+
+```shell
+mkdir ~/.config/codex
+gopls mcp -instructions > ~/.config/codex/gopls.instructions.md
+```
+
 ## Quick Start
 
 ### Installation
