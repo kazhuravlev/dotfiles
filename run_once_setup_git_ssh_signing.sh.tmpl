@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+KEY_NAME="SSH Key: main"
+PUBKEY_PATH="$HOME/.ssh/github_main_signing_key.pub"
+
+mkdir -p "$HOME/.ssh"
+chmod 700 "$HOME/.ssh"
+
+if ! command -v op >/dev/null 2>&1; then
+  echo "1Password CLI 'op' not found"
+  exit 1
+fi
+
+if ! op account list >/dev/null 2>&1; then
+  echo "1Password CLI is not signed in. Run: op signin"
+  exit 1
+fi
+
+op item get "$KEY_NAME" --fields "public key" > "$PUBKEY_PATH"
+
+chmod 644 "$PUBKEY_PATH"
+
+git config --global gpg.format ssh
+git config --global user.signingkey "$PUBKEY_PATH"
+git config --global commit.gpgsign true
+
+echo "Git SSH signing configured with 1Password key: $KEY_NAME"
+echo "Public key saved to: $PUBKEY_PATH"
+
