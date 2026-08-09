@@ -1,6 +1,7 @@
 [user]
 	name = Kirill Zhuravlev
 	email = kazhuravlev@fastmail.com
+	signingkey = ~/.ssh/github_main_signing_key.pub
 
 [core]
 	filemode = false
@@ -123,3 +124,10 @@
 
 [credential]
 	helper = osxkeychain
+
+[gpg]
+	format = ssh
+
+[commit]
+	gpgsign = true
+
