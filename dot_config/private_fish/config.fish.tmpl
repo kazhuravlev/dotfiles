@@ -81,13 +81,11 @@ alias tree="eza -T --long --all"
 alias rg="rg -i"  # Case insensitive by default
 
 # GitHub
-alias gh-view="gh repo view -w"
 
 # Chezmoi
 alias cm="chezmoi"
 
 # Git
-alias gs="git status"
 alias gc="git checkout"
 alias gpr="git pull --rebase"
 alias gcs="git commit -s"
@@ -99,12 +97,10 @@ alias glog='git log --format=format:"%Cgreen%ai%Creset %>(30) %ae %Cblue%s" --au
 # Kubernetes
 alias k="kubectl"
 alias ktx="kubectx"
-alias h="helm"
 
 # Development Tools
 alias e="nvim"
 alias gitup="open -a GitUp ."
-alias vscode="open -a Visual\\ Studio\\ Code"
 alias tm="tmux attach || tmux new"
 
 # Docker
@@ -116,7 +112,6 @@ alias dns-flush="sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 alias get-iphone-id="system_profiler SPUSBDataType | grep 'Serial Number' | awk '{print \$3}'"
 alias test-disk-read="dd if=tstfile bs=2048k of=/dev/null count=1024 2>&1 | grep sec | awk '{print \$1 / 1024 / 1024 / \$5, \"MB/sec\" }'"
 alias test-disk-write="dd if=/dev/zero bs=2048k of=tstfile count=1024 2>&1 | grep sec | awk '{print \$1 / 1024 / 1024 / \$5, \"MB/sec\" }'"
-alias yota="sudo sysctl -w net.inet.ip.ttl=65"
 
 # Cleanup Commands
 alias cleanup-go="go clean -cache -testcache -modcache -fuzzcache"
@@ -128,9 +123,6 @@ alias cleanup-all="cleanup-go && cleanup-rust && cleanup-caches && cleanup-logs 
 
 # Other Tools
 alias kfk="kafkactl"
-alias buf="arch -arm64 buf"
-alias tp="mkdir -p ~/.telepresence/run-dir && cd ~/.telepresence/run-dir && sudo telepresence"
-alias gitlab-pipelines="repeat 10000 clear && glab pipeline list -P 3 && sleep 3 || sleep 3"
 
 # Privacy
 alias incognito="set -e HISTFILE"
