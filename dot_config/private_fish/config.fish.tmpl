@@ -34,6 +34,14 @@ if test -S "$sock"
     set -gx SSH_AUTH_SOCK "$sock"
 end
 
+# Kubernetes envs
+## Join all files in configs dir into on KUBECONFIG env variable. 
+set -q KUBECONFIG; or set -gx --path KUBECONFIG \
+    $HOME/.kube/config
+set -gx --path KUBECONFIG \
+    $KUBECONFIG \
+    $HOME/.kube/configs/*.yaml
+
 # Build Configuration
 set -gx PKG_CONFIG_PATH $brew_prefix/opt/libffi/lib/pkgconfig
 set -gx LDFLAGS "-L$brew_prefix/opt/openssl/lib"
