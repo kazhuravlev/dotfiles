@@ -1,8 +1,5 @@
-{{- $secrets := list "HOMEBREW_GITHUB_API_TOKEN" "GOPRIVATE" "NGROK_AUTH_TOKEN" "GITHUB_TOKEN" -}}
-
-[data]
-    # Secrets configuration
-    # Using 1Password for secrets
-    {{- range $secret := $secrets }}
-    secrets.{{ $secret }} = {{ onepasswordRead (printf "op://Dotfiles/chezmoi-secrets/%s" $secret) | quote }}
-    {{- end }}
+[onepassword]
+    # Fetch current values during every template render and prompt for sign-in
+    # whenever there is no valid 1Password session.
+    cache = false
+    prompt = true

@@ -87,6 +87,10 @@ Sensitive data is managed through 1Password CLI integration:
 - GitHub tokens
 - Private environment variables
 
+`chezmoi apply` reads current values directly from 1Password while rendering
+the files that consume them. Secret values are not stored in chezmoi's source
+or configuration; only `op://` references are committed.
+
 ### Package Management
 
 Edit `.chezmoi.toml.tmpl` to customize the list of packages to install.

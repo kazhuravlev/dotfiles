@@ -25,10 +25,10 @@ set -gx EDITOR nvim
 set -gx VISUAL nvim
 
 # Development Envs
-set -gx HOMEBREW_GITHUB_API_TOKEN {{ .secrets.HOMEBREW_GITHUB_API_TOKEN }}
-set -gx GOPRIVATE {{ .secrets.GOPRIVATE | quote }}
+set -gx HOMEBREW_GITHUB_API_TOKEN {{ onepasswordRead "op://Dotfiles/chezmoi-secrets/HOMEBREW_GITHUB_API_TOKEN" | quote }}
+set -gx GOPRIVATE {{ onepasswordRead "op://Dotfiles/chezmoi-secrets/GOPRIVATE" | quote }}
 set -gx OS_OUTPUT_GOPATH 1
-set -gx GITHUB_TOKEN {{ .secrets.GITHUB_TOKEN }}
+set -gx GITHUB_TOKEN {{ onepasswordRead "op://Dotfiles/chezmoi-secrets/GITHUB_TOKEN" | quote }}
 set sock (ssh -G github.com | sed -n 's/^identityagent //p')
 if test -S "$sock"
     set -gx SSH_AUTH_SOCK "$sock"
